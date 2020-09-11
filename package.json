@@ -10,7 +10,9 @@
   "dependencies": {
     "@bindable-ui/bindable": "^1.4.2",
     "aurelia-animator-css": "^1.0.4",
-    "aurelia-bootstrapper": "^2.3.3"
+    "aurelia-bootstrapper": "^2.3.3",
+    "jquery": "^3.4.1",
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

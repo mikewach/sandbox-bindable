@@ -7,6 +7,7 @@ const project = require('./aurelia_project/aurelia.json');
 const { AureliaPlugin, ModuleDependenciesPlugin } = require('aurelia-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { ProvidePlugin } = require('webpack');
 
 // config helpers:
 const ensureArray = (config) => config && (Array.isArray(config) ? config : [config]) || [];
@@ -220,6 +221,25 @@ module.exports = ({ production } = {}, {extractCss, analyze, tests, hmr, port, h
       },
       { test: /\.html$/i, loader: 'html-loader' },
       { test: /\.ts$/, loader: "ts-loader" },
+      // exposes jQuery globally as $ and as jQuery:
+      { 
+        test: require.resolve('jquery'), 
+        loader: 'expose-loader',
+        options: {
+          exposes: ['$', 'jQuery']
+        }
+      },
+      // exposes lodash globally as _ and as lodash:
+      {
+        test: require.resolve('lodash'), 
+        loader: 'expose-loader',
+        options: {
+          exposes: {
+            globalName: ['_', 'lodash'],
+            override: true
+          }
+        }
+      },
       // embed small images and fonts as Data Urls and larger ones as files:
       { test: /\.(png|gif|jpg|cur)$/i, loader: 'url-loader', options: { limit: 8192 } },
       { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/i, loader: 'url-loader', options: { limit: 10000, mimetype: 'application/font-woff2' } },
@@ -239,6 +259,13 @@ module.exports = ({ production } = {}, {extractCss, analyze, tests, hmr, port, h
   plugins: [
     ...when(!tests, new DuplicatePackageCheckerPlugin()),
     new AureliaPlugin(),
+    new ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
+      _: 'lodash',
+      lodash: 'lodash',
+    }),
     new ModuleDependenciesPlugin({
       'aurelia-testing': ['./compile-spy', './view-spy']
     }),
